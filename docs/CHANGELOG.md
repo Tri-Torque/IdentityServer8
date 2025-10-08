@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning 2](http://semver.org/).
  
+## [8.1.0] - 2025-10-08
+
+- Updated all NuGet packages except AutoMapper to their respective, latest version
+- Fixed obsoleted method calls in FluentAssertions
+
 ## [Unreleased] - 2024-02-17
 
 - NET 9.0 Support
