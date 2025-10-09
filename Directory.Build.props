@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <!--always bump /version.json and /docs/conf.py to <Version>X.Y.Z</Version>to keep nuget, build and document versions in sync-->
-        <Version>8.1.0</Version>
-        <IdentityServerVersion>8.1.0</IdentityServerVersion>
+        <Version>8.1.0-preview-net9</Version>
+        <IdentityServerVersion>8.1.0-preview-net9</IdentityServerVersion>
         <PackageId>TTT.$(MSBuildProjectName)</PackageId>
         <Title>$(MSBuildProjectName)</Title>
         <ImplicitUsings>enable</ImplicitUsings>
