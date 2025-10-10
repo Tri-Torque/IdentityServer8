@@ -68,12 +68,12 @@ jobs:
     - name: Test
       run: dotnet test src/IdentityServer8.sln --configuration Release --no-build --verbosity normal /p:CollectCoverage=true --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
 
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4.0.1
-      env:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        slug: Tri-Torque/IdentityServer8
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    #- name: Upload coverage reports to Codecov
+    #  uses: codecov/codecov-action@v4.0.1
+    #  env:
+    #    token: ${{ secrets.CODECOV_TOKEN }}
+    #    slug: Tri-Torque/IdentityServer8
+    #    CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 
     - name: Push
