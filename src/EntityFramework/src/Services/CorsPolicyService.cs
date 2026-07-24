@@ -46,7 +46,7 @@ public class CorsPolicyService : ICorsPolicyService
         var dbContext = _context.HttpContext.RequestServices.GetRequiredService<IConfigurationDbContext>();
 
         var query = from o in dbContext.ClientCorsOrigins
-                    where o.Origin == origin
+                    where o.Origin.ToLower() == origin
                     select o;
         
         var isAllowed = await query.AnyAsync();
