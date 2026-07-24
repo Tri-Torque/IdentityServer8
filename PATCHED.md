@@ -77,9 +77,46 @@ Note: These packages are primarily consumed by sample projects, not the core lib
 
 ---
 
+## AutoMapper Removal (2026-07-24)
+
+Replaced AutoMapper 13.0.1 with hand-written mapping code to resolve both a high-severity DoS vulnerability ([GHSA-rvv3-g6hj-g44x](https://github.com/advisories/GHSA-rvv3-g6hj-g44x)) and an RPL/commercial license conflict (AutoMapper 15+ is incompatible with this project's Apache-2.0 license).
+
+### Scope
+
+AutoMapper was used only in the `EntityFramework.Storage` project for mapping between EF entities and domain models. The public API (`ToModel()`, `ToEntity()`, `UpdateEntity()` extension methods) is unchanged — no downstream callers were affected.
+
+### Files Changed
+
+| File | Change |
+|------|--------|
+| `src/EntityFramework.Storage/src/Mappers/AllowedSigningAlgorithmsConverter.cs` | Removed `IValueConverter<,>` interfaces; now a plain static utility class |
+| `src/EntityFramework.Storage/src/Mappers/PersistedGrantMappers.cs` | Replaced AutoMapper with manual property mapping |
+| `src/EntityFramework.Storage/src/Mappers/IdentityResourceMappers.cs` | Replaced AutoMapper with manual property mapping |
+| `src/EntityFramework.Storage/src/Mappers/ScopeMappers.cs` | Replaced AutoMapper with manual property mapping |
+| `src/EntityFramework.Storage/src/Mappers/ApiResourceMappers.cs` | Replaced AutoMapper with manual property mapping (handles `Secrets` ↔ `ApiSecrets` name mismatch) |
+| `src/EntityFramework.Storage/src/Mappers/ClientMappers.cs` | Replaced AutoMapper with manual property mapping (handles enum↔int casts, conditional null mapping, 9 nested collection types) |
+| `src/EntityFramework.Storage/src/GlobalUsings.cs` | Removed `global using AutoMapper;` |
+| `src/EntityFramework.Storage/src/IdentityServer8.EntityFramework.Storage.csproj` | Removed `PackageReference Include="AutoMapper"` |
+| `Directory.Packages.props` | Removed `PackageVersion Include="AutoMapper"` |
+
+### Files Deleted
+
+| File | Reason |
+|------|--------|
+| `src/EntityFramework.Storage/src/Mappers/PersistedGrantMapperProfile.cs` | No longer needed — mapping logic moved into mapper extension methods |
+| `src/EntityFramework.Storage/src/Mappers/IdentityResourceMapperProfile.cs` | Same |
+| `src/EntityFramework.Storage/src/Mappers/ScopeMapperProfile.cs` | Same |
+| `src/EntityFramework.Storage/src/Mappers/ApiResourceMapperProfile.cs` | Same |
+| `src/EntityFramework.Storage/src/Mappers/ClientMapperProfile.cs` | Same |
+
+### Tests Updated
+
+Removed 5 `AutomapperConfigurationIsValid()` test methods (one per mapper test class). All remaining 11 mapper tests pass unchanged.
+
+---
+
 ## Known Remaining Vulnerabilities
 
 | Package | Version | Severity | Advisory | Status |
 |---------|---------|----------|----------|--------|
-| `AutoMapper` | 13.0.1 | High | [GHSA-rvv3-g6hj-g44x](https://github.com/advisories/GHSA-rvv3-g6hj-g44x) (DoS) | **Pending decision** — AutoMapper 15+ changed to RPL/commercial license, which may conflict with the Apache-2.0 license of this project |
 | `SQLitePCLRaw.lib.e_sqlite3` | 2.1.11 | High | [GHSA-2m69-gcr7-jv3q](https://github.com/advisories/GHSA-2m69-gcr7-jv3q) | Transitive dependency in test projects only (via EF Core Sqlite) |

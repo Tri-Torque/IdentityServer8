@@ -21,12 +21,6 @@ namespace IdentityServer8.EntityFramework.UnitTests.Mappers;
 public class ScopesMappersTests
 {
     [Fact]
-    public void ScopeAutomapperConfigurationIsValid()
-    {
-        ScopeMappers.Mapper.ConfigurationProvider.AssertConfigurationIsValid();
-    }
-
-    [Fact]
     public void CanMapScope()
     {
         var model = new ApiScope();

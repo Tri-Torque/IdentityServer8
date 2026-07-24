@@ -1,5 +1,7 @@
 # TTT
-This project is a fork of [alexhiggins732/IdentityServer8](https://github.com/alexhiggins732/IdentityServer8) to make IdentityServer8 work on .NET 9
+This project is a fork of [alexhiggins732/IdentityServer8](https://github.com/alexhiggins732/IdentityServer8) to make IdentityServer8 work on .NET 10.
+
+See [PATCHED.md](PATCHED.md) for a full list of patches, security fixes, and dependency changes applied to this fork.
 
 ## Build Status And Stats
 
@@ -30,7 +32,7 @@ This project is a fork of [alexhiggins732/IdentityServer8](https://github.com/al
 
 ## How to build
 
-* [Install]([https://www.microsoft.com/net/download/core#/current](https://dotnet.microsoft.com/en-us/download#/current) the latest .NET 9 SDK
+* [Install](https://dotnet.microsoft.com/en-us/download#/current) the latest .NET 10 SDK
 * Install Git
 * Clone this repo
 * Run `dotnet build src/identityserver8.sln` or `build.sh` in the root of the cloned repo.

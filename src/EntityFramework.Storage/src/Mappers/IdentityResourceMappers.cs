@@ -19,14 +19,6 @@ namespace IdentityServer8.EntityFramework.Mappers
     /// </summary>
     public static class IdentityResourceMappers
     {
-        static IdentityResourceMappers()
-        {
-            Mapper = new MapperConfiguration(cfg => cfg.AddProfile<IdentityResourceMapperProfile>())
-                .CreateMapper();
-        }
-
-        internal static IMapper Mapper { get; }
-
         /// <summary>
         /// Maps an entity to a model.
         /// </summary>
@@ -34,7 +26,20 @@ namespace IdentityServer8.EntityFramework.Mappers
         /// <returns></returns>
         public static Models.IdentityResource ToModel(this IdentityResource entity)
         {
-            return entity == null ? null : Mapper.Map<Models.IdentityResource>(entity);
+            if (entity == null) return null;
+
+            return new Models.IdentityResource
+            {
+                Enabled = entity.Enabled,
+                Name = entity.Name,
+                DisplayName = entity.DisplayName,
+                Description = entity.Description,
+                Required = entity.Required,
+                Emphasize = entity.Emphasize,
+                ShowInDiscoveryDocument = entity.ShowInDiscoveryDocument,
+                UserClaims = entity.UserClaims?.Select(c => c.Type).ToHashSet() ?? new HashSet<string>(),
+                Properties = entity.Properties?.ToDictionary(p => p.Key, p => p.Value) ?? new Dictionary<string, string>(),
+            };
         }
 
         /// <summary>
@@ -44,7 +49,20 @@ namespace IdentityServer8.EntityFramework.Mappers
         /// <returns></returns>
         public static IdentityResource ToEntity(this Models.IdentityResource model)
         {
-            return model == null ? null : Mapper.Map<IdentityResource>(model);
+            if (model == null) return null;
+
+            return new IdentityResource
+            {
+                Enabled = model.Enabled,
+                Name = model.Name,
+                DisplayName = model.DisplayName,
+                Description = model.Description,
+                Required = model.Required,
+                Emphasize = model.Emphasize,
+                ShowInDiscoveryDocument = model.ShowInDiscoveryDocument,
+                UserClaims = model.UserClaims?.Select(c => new IdentityResourceClaim { Type = c }).ToList() ?? new List<IdentityResourceClaim>(),
+                Properties = model.Properties?.Select(p => new IdentityResourceProperty { Key = p.Key, Value = p.Value }).ToList() ?? new List<IdentityResourceProperty>(),
+            };
         }
     }
 }

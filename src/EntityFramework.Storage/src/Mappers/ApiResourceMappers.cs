@@ -19,14 +19,6 @@ namespace IdentityServer8.EntityFramework.Mappers
     /// </summary>
     public static class ApiResourceMappers
     {
-        static ApiResourceMappers()
-        {
-            Mapper = new MapperConfiguration(cfg => cfg.AddProfile<ApiResourceMapperProfile>())
-                .CreateMapper();
-        }
-
-        internal static IMapper Mapper { get; }
-
         /// <summary>
         /// Maps an entity to a model.
         /// </summary>
@@ -34,7 +26,27 @@ namespace IdentityServer8.EntityFramework.Mappers
         /// <returns></returns>
         public static Models.ApiResource ToModel(this ApiResource entity)
         {
-            return entity == null ? null : Mapper.Map<Models.ApiResource>(entity);
+            if (entity == null) return null;
+
+            return new Models.ApiResource
+            {
+                Enabled = entity.Enabled,
+                Name = entity.Name,
+                DisplayName = entity.DisplayName,
+                Description = entity.Description,
+                ShowInDiscoveryDocument = entity.ShowInDiscoveryDocument,
+                AllowedAccessTokenSigningAlgorithms = AllowedSigningAlgorithmsConverter.Convert(entity.AllowedAccessTokenSigningAlgorithms),
+                UserClaims = entity.UserClaims?.Select(c => c.Type).ToHashSet() ?? new HashSet<string>(),
+                Properties = entity.Properties?.ToDictionary(p => p.Key, p => p.Value) ?? new Dictionary<string, string>(),
+                ApiSecrets = entity.Secrets?.Select(s => new Models.Secret
+                {
+                    Description = s.Description,
+                    Value = s.Value,
+                    Expiration = s.Expiration,
+                    Type = s.Type,
+                }).ToHashSet() ?? new HashSet<Models.Secret>(),
+                Scopes = entity.Scopes?.Select(s => s.Scope).ToHashSet() ?? new HashSet<string>(),
+            };
         }
 
         /// <summary>
@@ -44,7 +56,27 @@ namespace IdentityServer8.EntityFramework.Mappers
         /// <returns></returns>
         public static ApiResource ToEntity(this Models.ApiResource model)
         {
-            return model == null ? null : Mapper.Map<ApiResource>(model);
+            if (model == null) return null;
+
+            return new ApiResource
+            {
+                Enabled = model.Enabled,
+                Name = model.Name,
+                DisplayName = model.DisplayName,
+                Description = model.Description,
+                ShowInDiscoveryDocument = model.ShowInDiscoveryDocument,
+                AllowedAccessTokenSigningAlgorithms = AllowedSigningAlgorithmsConverter.Convert(model.AllowedAccessTokenSigningAlgorithms),
+                UserClaims = model.UserClaims?.Select(c => new ApiResourceClaim { Type = c }).ToList() ?? new List<ApiResourceClaim>(),
+                Properties = model.Properties?.Select(p => new ApiResourceProperty { Key = p.Key, Value = p.Value }).ToList() ?? new List<ApiResourceProperty>(),
+                Secrets = model.ApiSecrets?.Select(s => new ApiResourceSecret
+                {
+                    Description = s.Description,
+                    Value = s.Value,
+                    Expiration = s.Expiration,
+                    Type = s.Type,
+                }).ToList() ?? new List<ApiResourceSecret>(),
+                Scopes = model.Scopes?.Select(s => new ApiResourceScope { Scope = s }).ToList() ?? new List<ApiResourceScope>(),
+            };
         }
     }
 }

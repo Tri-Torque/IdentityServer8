@@ -19,14 +19,6 @@ namespace IdentityServer8.EntityFramework.Mappers
     /// </summary>
     public static class ScopeMappers
     {
-        static ScopeMappers()
-        {
-            Mapper = new MapperConfiguration(cfg => cfg.AddProfile<ScopeMapperProfile>())
-                .CreateMapper();
-        }
-
-        internal static IMapper Mapper { get; }
-
         /// <summary>
         /// Maps an entity to a model.
         /// </summary>
@@ -34,7 +26,20 @@ namespace IdentityServer8.EntityFramework.Mappers
         /// <returns></returns>
         public static Models.ApiScope ToModel(this ApiScope entity)
         {
-            return entity == null ? null : Mapper.Map<Models.ApiScope>(entity);
+            if (entity == null) return null;
+
+            return new Models.ApiScope
+            {
+                Enabled = entity.Enabled,
+                Name = entity.Name,
+                DisplayName = entity.DisplayName,
+                Description = entity.Description,
+                Required = entity.Required,
+                Emphasize = entity.Emphasize,
+                ShowInDiscoveryDocument = entity.ShowInDiscoveryDocument,
+                UserClaims = entity.UserClaims?.Select(c => c.Type).ToHashSet() ?? new HashSet<string>(),
+                Properties = entity.Properties?.ToDictionary(p => p.Key, p => p.Value) ?? new Dictionary<string, string>(),
+            };
         }
 
         /// <summary>
@@ -44,7 +49,20 @@ namespace IdentityServer8.EntityFramework.Mappers
         /// <returns></returns>
         public static ApiScope ToEntity(this Models.ApiScope model)
         {
-            return model == null ? null : Mapper.Map<ApiScope>(model);
+            if (model == null) return null;
+
+            return new ApiScope
+            {
+                Enabled = model.Enabled,
+                Name = model.Name,
+                DisplayName = model.DisplayName,
+                Description = model.Description,
+                Required = model.Required,
+                Emphasize = model.Emphasize,
+                ShowInDiscoveryDocument = model.ShowInDiscoveryDocument,
+                UserClaims = model.UserClaims?.Select(c => new ApiScopeClaim { Type = c }).ToList() ?? new List<ApiScopeClaim>(),
+                Properties = model.Properties?.Select(p => new ApiScopeProperty { Key = p.Key, Value = p.Value }).ToList() ?? new List<ApiScopeProperty>(),
+            };
         }
     }
 }
