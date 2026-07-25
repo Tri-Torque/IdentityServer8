@@ -6,7 +6,7 @@ Summary of patches applied to the IdentityServer8 codebase, with rationale.
 
 ## .NET 10 Upgrade (2026-07-24)
 
-Upgraded from .NET 9 (`net9.0`, SDK 9.0.305) to .NET 10 (`net10.0`, SDK 10.0.302).
+Upgraded from .NET 9 (`net9.0`, SDK 9.0.305) to .NET 10 (`net10.0`, SDK 10.0.301).
 Reference: [omarbaruzzo/IdentityServer10](https://github.com/omarbaruzzo/IdentityServer10)
 
 ### Build Infrastructure
