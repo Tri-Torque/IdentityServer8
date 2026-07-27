@@ -23,6 +23,65 @@ namespace IdentityServer.UnitTests.Extensions
             Assert.Equal(expectedOrigin, actualOrigin);
         }
 
+        #region IsLocalUrl Tests
+
+        [Theory]
+        [InlineData("/", true)]
+        [InlineData("/foo", true)]
+        [InlineData("/foo/bar", true)]
+        [InlineData("/foo?query=1", true)]
+        [InlineData("~/", true)]
+        [InlineData("~/foo", true)]
+        [InlineData("~/foo/bar", true)]
+        public void IsLocalUrl_ValidLocalUrls_ReturnsTrue(string url, bool expected)
+        {
+            Assert.Equal(expected, url.IsLocalUrl());
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("//")]
+        [InlineData("/\\")]
+        [InlineData("~//")]
+        [InlineData("~/\\")]
+        [InlineData("http://example.com")]
+        [InlineData("https://evil.com")]
+        [InlineData("ftp://somewhere")]
+        [InlineData("javascript:alert(1)")]
+        public void IsLocalUrl_InvalidUrls_ReturnsFalse(string url)
+        {
+            Assert.False(url.IsLocalUrl());
+        }
+
+        [Theory]
+        [InlineData("/foo\tbar")]       // tab
+        [InlineData("/foo\nbar")]       // newline (LF)
+        [InlineData("/foo\rbar")]       // carriage return (CR)
+        [InlineData("/foo\0bar")]       // null byte
+        [InlineData("/\x01path")]       // SOH control character
+        [InlineData("/path\x1F")]       // US control character
+        public void IsLocalUrl_SlashWithControlCharacters_ReturnsFalse(string url)
+        {
+            // CVE-2024-39694: URLs with control characters must be rejected
+            Assert.False(url.IsLocalUrl());
+        }
+
+        [Theory]
+        [InlineData("~/foo\tbar")]      // tab
+        [InlineData("~/foo\nbar")]      // newline (LF)
+        [InlineData("~/foo\rbar")]      // carriage return (CR)
+        [InlineData("~/foo\0bar")]      // null byte
+        [InlineData("~/\x01path")]      // SOH control character
+        [InlineData("~/path\x1F")]      // US control character
+        public void IsLocalUrl_TildeSlashWithControlCharacters_ReturnsFalse(string url)
+        {
+            // CVE-2024-39694: URLs with control characters must be rejected
+            Assert.False(url.IsLocalUrl());
+        }
+
+        #endregion
+
         [Fact]
         public void TestGetOrigin()
         {

@@ -21,6 +21,8 @@ public class CachingResourceStore<T> : IResourceStore
     where T : IResourceStore
 {
     private const string AllKey = "__all__";
+    private const string ApiResourcesByNamePrefix = "ByName-";
+    private const string ApiResourcesByScopePrefix = "ByScope-";
 
     private readonly IdentityServerOptions _options;
     
@@ -84,7 +86,7 @@ public class CachingResourceStore<T> : IResourceStore
     /// <inheritdoc/>
     public async Task<IEnumerable<ApiResource>> FindApiResourcesByNameAsync(IEnumerable<string> apiResourceNames)
     {
-        var key = GetKey(apiResourceNames);
+        var key = ApiResourcesByNamePrefix + GetKey(apiResourceNames);
 
         var apis = await _apiResourceCache.GetAsync(key,
             _options.Caching.ResourceStoreExpiration,
@@ -110,7 +112,7 @@ public class CachingResourceStore<T> : IResourceStore
     /// <inheritdoc/>
     public async Task<IEnumerable<ApiResource>> FindApiResourcesByScopeNameAsync(IEnumerable<string> names)
     {
-        var key = GetKey(names);
+        var key = ApiResourcesByScopePrefix + GetKey(names);
 
         var apis = await _apiByScopeCache.GetAsync(key,
             _options.Caching.ResourceStoreExpiration,
