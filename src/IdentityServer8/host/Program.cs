@@ -26,21 +26,25 @@ public class Program
             .MinimumLevel.Override("System", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
             .Enrich.FromLogContext()
-            //.WriteTo.File(@"IdentityServer8_log.txt")
-            // uncomment to write to Azure diagnostics stream
-            //.WriteTo.File(
-            //    @"D:\home\LogFiles\Application\identityserver.txt",
-            //    fileSizeLimitBytes: 1_000_000,
-            //    rollOnFileSizeLimit: true,
-            //    shared: true,
-            //    flushToDiskInterval: TimeSpan.FromSeconds(1))
             .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Code)
             .CreateLogger();
 
         try
         {
             Log.Information("Starting host...");
-            CreateHostBuilder(args).Build().Run();
+
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Host.UseSerilog();
+            builder.AddServiceDefaults();
+
+            var startup = new Startup(builder.Configuration);
+            startup.ConfigureServices(builder.Services);
+
+            var app = builder.Build();
+            app.MapDefaultEndpoints();
+            startup.Configure(app);
+
+            app.Run();
             return 0;
         }
         catch (Exception ex)
@@ -53,12 +57,4 @@ public class Program
             Log.CloseAndFlush();
         }
     }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .UseSerilog()
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>();
-            });
 }

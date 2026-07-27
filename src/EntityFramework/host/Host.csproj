@@ -4,6 +4,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\IdentityServer8.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\ServiceDefaults\ServiceDefaults.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" />
     
     <PackageReference Include="Serilog.AspNetCore" />
