@@ -3,6 +3,43 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning 2](http://semver.org/).
+
+## [10.0.0] - 2026-07-27
+
+### Changed
+
+- Upgraded from .NET 9 to .NET 10 (`net10.0`, SDK 10.0.302)
+- Upgraded all ASP.NET Core, EF Core, and Microsoft.Extensions packages to 10.0.10
+- Upgraded `Microsoft.Data.SqlClient` 5.1.6 → 6.1.1
+- Upgraded `Azure.Identity` 1.11.4 → 1.14.2
+- Upgraded `Microsoft.IdentityModel.*` 8.14.0 → 8.19.2
+- Upgraded `Npgsql.EntityFrameworkCore.PostgreSQL` → 10.0.3
+- Upgraded `Pomelo.EntityFrameworkCore.MySql` 7.0.0 → 9.0.0
+- Upgraded `Swashbuckle.AspNetCore` 6.5.0 → 10.2.3
+- Upgraded `Nerdbank.GitVersioning` 3.6.133 → 3.10.91
+- Upgraded `Microsoft.AspNetCore.Authentication.Google` from pinned 3.1.5 to `$(AspnetMinorVersion)`
+- Decoupled Serilog and HealthChecks packages from ASP.NET versioning
+- Introduced dedicated `$(EfVersion)` variable for EF Core packages
+- Updated all GitHub Actions workflows to .NET 10.x, actions/checkout v4, actions/setup-dotnet v4
+
+### Security
+
+- Fixed CVE-2024-39694: Open redirect vulnerability in `IsLocalUrl()` — URLs with ASCII control characters are now rejected in both `/path` and `~/path` forms
+- Updated `Google.Protobuf` 3.23.4 → 3.25.5 (CVE-2024-7254, DoS via deeply nested groups)
+- Updated `HtmlAgilityPack` 1.11.40 → 1.12.4 (vulnerable transitive dependency)
+- Updated `jQuery.validation` 1.19.5 → 1.21.0 (XSS in versions < 1.20.0)
+- Fixed CORS origin matching bug in `CorsPolicyService.cs` — database comparison is now case-insensitive per RFC 6454
+
+### Fixed
+
+- Fixed `CachingResourceStore` key collision between `FindApiResourcesByNameAsync` and `FindApiResourcesByScopeNameAsync` — both shared the same cache namespace; added distinct key prefixes
+- Resolved `SQLitePCLRaw.lib.e_sqlite3` vulnerability (GHSA-2m69-gcr7-jv3q) via version bump to 2.1.12
+- Removed ILLink `_FixKnownILLinkPack` workaround (no longer needed on .NET 10)
+
+### Removed
+
+- Removed AutoMapper dependency — replaced with hand-written mapping code to resolve DoS vulnerability (GHSA-rvv3-g6hj-g44x) and Apache-2.0 license conflict with AutoMapper 15+ RPL license
+- Removed 5 AutoMapper profile classes from `EntityFramework.Storage`
  
 ## [8.1.0] - 2025-10-08
 
