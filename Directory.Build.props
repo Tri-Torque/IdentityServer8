@@ -15,7 +15,7 @@
         <NoWarn>$(NoWarn);CS0618;CS8632;SYSLIB0013;SYSLIB0023;SYSLIB0020;SYSLIB0057;ASPDEPR004;ASPDEPR008;EF1001;xUnit1048</NoWarn>
 
 		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>$(SolutionDir)../key.snk</AssemblyOriginatorKeyFile>
+		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
 
 
         <Description>OpenID Connect and OAuth 2.0 Framework for ASP.NET Core</Description>
@@ -53,7 +53,7 @@
         <LangVersion>latest</LangVersion>
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <PackageOutputPath>$(SolutionDir)../nuget</PackageOutputPath>
+        <PackageOutputPath>$(MSBuildThisFileDirectory)nuget</PackageOutputPath>
 
 
         <IsPackable>false</IsPackable>
@@ -73,20 +73,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="$(SolutionDir)../LICENSE">
+        <None Include="$(MSBuildThisFileDirectory)LICENSE">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
     </ItemGroup>
     <ItemGroup>
-        <None Include="$(SolutionDir)../README.md">
+        <None Include="$(MSBuildThisFileDirectory)README.md">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
 
     </ItemGroup>
     <ItemGroup>
-        <None Include="$(SolutionDir)../icon.jpg">
+        <None Include="$(MSBuildThisFileDirectory)icon.jpg">
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>

@@ -52,6 +52,15 @@ public class Startup
 
     public void Configure(IApplicationBuilder app)
     {
+        // Ensure IdentityServer EF database schema is created
+        using (var scope = app.ApplicationServices.CreateScope())
+        {
+            var configDb = scope.ServiceProvider.GetRequiredService<IdentityServer8.EntityFramework.DbContexts.ConfigurationDbContext>();
+            configDb.Database.EnsureCreated();
+            var operationalDb = scope.ServiceProvider.GetRequiredService<IdentityServer8.EntityFramework.DbContexts.PersistedGrantDbContext>();
+            operationalDb.Database.EnsureCreated();
+        }
+
         app.UseDeveloperExceptionPage();
 
         app.UseStaticFiles();

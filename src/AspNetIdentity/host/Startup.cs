@@ -56,6 +56,13 @@ namespace IdentityServerHost
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Ensure ASP.NET Identity database schema is created
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.EnsureCreated();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -248,7 +248,7 @@ docs/_build/
 tools/
 
 # Visual Studio Code workspace options
-.vscode
+# .vscode
 
 # IdentityServer temp files
 IdentityServer8_log.txt
