@@ -125,6 +125,6 @@ public static class ValidatedAuthorizeRequestExtensions
             hash = sha.ComputeHash(bytes);
         }
 
-        return Base64Url.Encode(hash) + "." + salt;
+        return System.Buffers.Text.Base64Url.EncodeToString(hash) + "." + salt;
     }
 }

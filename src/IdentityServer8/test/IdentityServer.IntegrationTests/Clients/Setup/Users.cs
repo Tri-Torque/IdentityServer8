@@ -12,7 +12,7 @@
 
 using System.Collections.Generic;
 using System.Security.Claims;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer8;
 using IdentityServer8.Test;
 

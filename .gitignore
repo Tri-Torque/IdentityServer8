@@ -253,8 +253,6 @@ tools/
 # IdentityServer temp files
 IdentityServer8_log.txt
 tempkey.rsa
-samples/KeyManagement/FileSystem/dataprotectionkeys/
-samples/KeyManagement/FileSystem/signingkeys/
 workspace.xml
 
 src/IdentityServer8/host/identityserver.db

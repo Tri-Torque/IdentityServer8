@@ -11,7 +11,7 @@
 */
 
 using FluentAssertions;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer8.EntityFramework.DbContexts;
 using IdentityServer8.EntityFramework.Entities;
 using IdentityServer8.EntityFramework.Options;

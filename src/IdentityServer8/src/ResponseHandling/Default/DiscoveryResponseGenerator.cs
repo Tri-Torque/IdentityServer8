@@ -370,13 +370,13 @@ public class DiscoveryResponseGenerator : IDiscoveryResponseGenerator
             if (key.Key is X509SecurityKey x509Key)
             {
                 var cert64 = Convert.ToBase64String(x509Key.Certificate.RawData);
-                var thumbprint = Base64Url.Encode(x509Key.Certificate.GetCertHash());
+                var thumbprint = System.Buffers.Text.Base64Url.EncodeToString(x509Key.Certificate.GetCertHash());
 
                 if (x509Key.PublicKey is RSA rsa)
                 {
                     var parameters = rsa.ExportParameters(false);
-                    var exponent = Base64Url.Encode(parameters.Exponent);
-                    var modulus = Base64Url.Encode(parameters.Modulus);
+                    var exponent = System.Buffers.Text.Base64Url.EncodeToString(parameters.Exponent);
+                    var modulus = System.Buffers.Text.Base64Url.EncodeToString(parameters.Modulus);
 
                     var rsaJsonWebKey = new Models.JsonWebKey
                     {
@@ -394,8 +394,8 @@ public class DiscoveryResponseGenerator : IDiscoveryResponseGenerator
                 else if (x509Key.PublicKey is ECDsa ecdsa)
                 {
                     var parameters = ecdsa.ExportParameters(false);
-                    var x = Base64Url.Encode(parameters.Q.X);
-                    var y = Base64Url.Encode(parameters.Q.Y);
+                    var x = System.Buffers.Text.Base64Url.EncodeToString(parameters.Q.X);
+                    var y = System.Buffers.Text.Base64Url.EncodeToString(parameters.Q.Y);
 
                     var ecdsaJsonWebKey = new Models.JsonWebKey
                     {
@@ -419,8 +419,8 @@ public class DiscoveryResponseGenerator : IDiscoveryResponseGenerator
             else if (key.Key is RsaSecurityKey rsaKey)
             {
                 var parameters = rsaKey.Rsa?.ExportParameters(false) ?? rsaKey.Parameters;
-                var exponent = Base64Url.Encode(parameters.Exponent);
-                var modulus = Base64Url.Encode(parameters.Modulus);
+                var exponent = System.Buffers.Text.Base64Url.EncodeToString(parameters.Exponent);
+                var modulus = System.Buffers.Text.Base64Url.EncodeToString(parameters.Modulus);
 
                 var webKey = new Models.JsonWebKey
                 {
@@ -437,8 +437,8 @@ public class DiscoveryResponseGenerator : IDiscoveryResponseGenerator
             else if (key.Key is ECDsaSecurityKey ecdsaKey)
             {
                 var parameters = ecdsaKey.ECDsa.ExportParameters(false);
-                var x = Base64Url.Encode(parameters.Q.X);
-                var y = Base64Url.Encode(parameters.Q.Y);
+                var x = System.Buffers.Text.Base64Url.EncodeToString(parameters.Q.X);
+                var y = System.Buffers.Text.Base64Url.EncodeToString(parameters.Q.Y);
 
                 var ecdsaJsonWebKey = new Models.JsonWebKey
                 {

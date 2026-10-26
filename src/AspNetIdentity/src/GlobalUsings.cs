@@ -10,7 +10,7 @@
  copies or substantial portions of the Software.
 */
 
-global using IdentityModel;
+global using Duende.IdentityModel;
 global using IdentityServer8;
 global using IdentityServer8.AspNetIdentity;
 global using IdentityServer8.Extensions;
@@ -21,4 +21,4 @@ global using Microsoft.AspNetCore.Authentication.Cookies;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.Extensions.Logging;
 global using System.Security.Claims;
-global using static IdentityModel.OidcConstants;
+global using static Duende.IdentityModel.OidcConstants;

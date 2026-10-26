@@ -11,7 +11,7 @@
 */
 
 using FluentAssertions;
-using IdentityModel.Client;
+using Duende.IdentityModel.Client;
 using IdentityServer.IntegrationTests.Clients.Setup;
 using IdentityServer8.Extensions;
 using Microsoft.AspNetCore.Hosting;

@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning 2](http://semver.org/).
 
+## [Unreleased]
+
+### Security
+
+- Pinned `System.Security.Cryptography.Pkcs` to 10.0.14 (GHSA-846f-f764-76mx, GHSA-2fmv-rv2c-59x7; transitive via `Microsoft.Data.SqlClient` and `Aspire.Hosting.SqlServer`)
+- Upgraded `Microsoft.SourceLink.GitHub` 10.0.301 → 10.0.403, fixing vulnerable `Microsoft.Build.Tasks.Git` (GHSA-23fw-v26w-5fgq)
+- Removed the `samples/KeyManagement` sample, which depended on vulnerable `IdentityServer4` 3.1.0 via `IdentityServer4.KeyManagement`
+
+### Changed
+
+- SDK 10.0.302 → 10.0.403; `Microsoft.CodeAnalysis.NetAnalyzers` → 10.0.403
+- Upgraded all ASP.NET Core, EF Core, and Microsoft.Extensions packages to 10.0.14
+- Upgraded `Microsoft.Extensions.Http.Resilience` and `Microsoft.Extensions.ServiceDiscovery` → 10.11.0
+- Upgraded `OpenTelemetry.*` → 1.20.1, `Microsoft.IdentityModel.*` / `System.IdentityModel.Tokens.Jwt` → 8.23.0
+- Upgraded `Microsoft.Data.SqlClient` (transitive pin) → 7.1.1, `SQLitePCLRaw.*` → 2.1.14, `Grpc.*` → 2.84.0, `Google.Protobuf` → 3.36.2
+- Upgraded `Serilog` → 4.4.0, `Serilog.Settings.Configuration` → 10.0.1
+- Migrated tests from deprecated xUnit v2 to xUnit v3 (`xunit.v3.mtp-off` 4.0.2, VSTest runner `xunit.runner.visualstudio` 4.0.1); upgraded `Microsoft.NET.Test.Sdk` → 18.11.0, `coverlet.collector` → 10.1.0, `FluentAssertions` → 8.11.0
+- `IdentityServer8.Security` now uses `FrameworkReference Microsoft.AspNetCore.App` instead of the legacy 2.x `Microsoft.AspNetCore.Http/Mvc.Abstractions` packages
+- **Breaking:** replaced the deprecated `IdentityModel` 7.0.0 package with `Duende.IdentityModel` 8.1.0 (Apache-2.0) in `IdentityServer8` and `IdentityServer8.Storage`. Consumers that use `OidcConstants`/`JwtClaimTypes` etc. transitively must change `using IdentityModel;` to `using Duende.IdentityModel;` (`IdentityModel.Client` → `Duende.IdentityModel.Client`). `IdentityModel.Base64Url` (removed in Duende) was replaced by .NET's `System.Buffers.Text.Base64Url`.
+
+### Removed
+
+- Unused build project `src/Storage/build` (its sources were already deleted)
+- 75 unused `PackageVersion` entries from `Directory.Packages.props` (including `Refit`, which carried a critical advisory)
+
 ## [10.0.0] - 2026-07-27
 
 ### Changed

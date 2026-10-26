@@ -20,7 +20,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FluentAssertions;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer.IntegrationTests.Common;
 using IdentityServer8;
 using IdentityServer8.Configuration;

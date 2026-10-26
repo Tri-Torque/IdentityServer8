@@ -10,7 +10,7 @@
  copies or substantial portions of the Software.
 */
 
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer8.EntityFramework.DbContexts;
 using IdentityServer8.EntityFramework.Mappers;
 using IdentityServer8.EntityFramework.Options;

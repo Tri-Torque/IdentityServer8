@@ -115,8 +115,92 @@ Removed 5 `AutomapperConfigurationIsValid()` test methods (one per mapper test c
 
 ---
 
+## NuGet Audit & Package Updates (2026-10-26)
+
+Audited every project in `src/` and `samples/` against the nuget.org vulnerability database. Fixed all vulnerabilities, updated outdated and deprecated packages and cleaned up central package management. Still targets `net10.0`.
+
+### Vulnerability Fixes
+
+| Package | From | To | Advisory | Severity | Fix |
+|---------|------|----|----------|----------|-----|
+| `System.Security.Cryptography.Pkcs` | 9.0.13 / 10.0.12 | 10.0.14 | [GHSA-846f-f764-76mx](https://github.com/advisories/GHSA-846f-f764-76mx), [GHSA-2fmv-rv2c-59x7](https://github.com/advisories/GHSA-2fmv-rv2c-59x7) | High + Moderate | Central pin in a new `Security pins` ItemGroup. It's a transitive dependency of `Microsoft.Data.SqlClient` and `Aspire.Hosting.SqlServer`. Even the latest versions (SqlClient 7.1.1, Aspire 13.6.4) still allow a vulnerable version. |
+| `Microsoft.Build.Tasks.Git` | 10.0.301 | 10.0.403 | [GHSA-23fw-v26w-5fgq](https://github.com/advisories/GHSA-23fw-v26w-5fgq) | Moderate | `Microsoft.SourceLink.GitHub` → `10.0.403` (all projects) |
+| `IdentityServer4` | 3.1.0 | — | Two advisories, no patched version | Moderate | Removed the `samples/KeyManagement` sample, which brought it in through `IdentityServer4.KeyManagement` |
+| `Refit` | 7.0.0 | — | [GHSA-3hxg-fxwm-8gf7](https://github.com/advisories/GHSA-3hxg-fxwm-8gf7) | Critical | Declared but never referenced; removed from `Directory.Packages.props` |
+
+### Build Infrastructure
+
+| File | Change | Reason |
+|------|--------|--------|
+| `global.json` | SDK `10.0.302` → `10.0.403` | Use the same version as NetAnalyzers/SourceLink 10.0.403 |
+| `Directory.Build.props` | Removed undefined `Version="$(...)"` attributes from the global NetAnalyzers/SourceLink `PackageReference`s | Versions come from CPM; the properties were never defined |
+| `Directory.Build.props` | Added `xUnit1051` to `NoWarn` | New xUnit v3 analyzer suggestion (pass `TestContext.Current.CancellationToken`), 325 occurrences; addressing them is a separate change |
+| `src/Storage/build/` | Deleted | Dead project: the `Program.Partial.cs` it compiled was already removed |
+| `samples/KeyManagement/` | Deleted (with its `.gitignore` entries) | Depended on vulnerable `IdentityServer4` 3.1.0 |
+
+### Package Versions (`Directory.Packages.props`)
+
+| Change | Reason |
+|--------|--------|
+| `AspnetVersion`, `AspnetMinorVersion`, `MicrosoftExtensionsVersion`, `EfVersion` → `10.0.14` | Latest .NET 10 patches. Also fixes the NU1109 restore error in `Quickstarts/6_AspNetIdentity`, caused by the EF 10.0.10 / ASP.NET 10.0.12 mismatch. |
+| `Microsoft.Extensions.Http.Resilience` `10.1.0` → `10.11.0`, `Microsoft.Extensions.ServiceDiscovery` `10.8.0` → `10.11.0` | Latest stable |
+| `OpenTelemetry.*` `1.16.0` / `1.17.0` → `1.20.1` | Latest stable; aligned all five packages |
+| `Microsoft.IdentityModel.*`, `System.IdentityModel.Tokens.Jwt` `8.19.2` → `8.23.0` | Latest stable |
+| `Microsoft.Data.SqlClient` (transitive pin) `7.0.2` → `7.1.1` | Latest stable |
+| `SQLitePCLRaw.*` `2.1.12` → `2.1.14` | Required by EF Core Sqlite 10.0.14 (≥ 2.1.13), otherwise NU1109 |
+| `GrpcVersion` `2.83.0` → `2.84.0`, `Google.Protobuf` `3.36.1` → `3.36.2` | Latest stable (transitive pins for the Aspire AppHost) |
+| `Serilog` `4.3.0` → `4.4.0`, `Serilog.Settings.Configuration` → `10.0.1` | Latest stable |
+| `Microsoft.CodeAnalysis.NetAnalyzers` / `Microsoft.SourceLink.GitHub` → `10.0.403` | Match SDK 10.0.403 |
+| `Microsoft.NET.Test.Sdk` `18.8.1` → `18.11.0`, `coverlet.collector` `10.0.1` → `10.1.0`, `FluentAssertions` `8.10.0` → `8.11.0` | Latest stable |
+| `xunit` `2.9.3` → `xunit.v3.mtp-off` `4.0.2`, `xunit.runner.visualstudio` `3.1.5` → `4.0.1` | xUnit v2 is deprecated. The `mtp-off` variant keeps the existing VSTest-based `dotnet test` CI path and Cobertura coverage working (the default `xunit.v3` package switches to Microsoft.Testing.Platform, which the .NET 10 SDK refuses under VSTest). |
+| `Microsoft.AspNetCore.Http.Abstractions` / `Mvc.Abstractions` `2.3.0` removed | Replaced by a `FrameworkReference` (see below) |
+| 72 dormant `PackageVersion` entries removed, plus `IdentityServer4.KeyManagement`, `Bullseye`, `SimpleExec`, and the `RuntimeVersion` property | Not used by any project and not pinning any transitive package; resolved package graphs were identical before and after removal |
+
+### `IdentityServer8.Security` → FrameworkReference
+
+**File:** `src/Security/IdentityServer8.Security/IdentityServer8.Security.csproj`
+
+Replaced six package references with `<FrameworkReference Include="Microsoft.AspNetCore.App" />`. The removed references were the legacy 2.x `Microsoft.AspNetCore.Http.Abstractions` and `Mvc.Abstractions` packages and four `Microsoft.Extensions.DependencyInjection*` / `Logging*` packages. The packed `.nuspec` now declares the framework reference and has no package dependencies. A standalone console consumer was verified to restore, build and run against the packed package.
+
+### xUnit v3 Test Migration
+
+| File(s) | Change | Reason |
+|---------|--------|--------|
+| 6 test `.csproj` files | `xunit` → `xunit.v3.mtp-off`, added `<OutputType>Exe</OutputType>` | xUnit v3 test projects are executables |
+| `Validation/Secrets/{BasicAuthenticationCredentialParsing,ClientAssertionSecretParsing,FormPostCredentialParsing}.cs` | 24 `async void` tests → `async Task` | `async void` tests are not supported in v3 (xUnit1049) |
+| `EntityFramework.Storage/test/IntegrationTests/IntegrationTest.cs`, `EntityFramework/test/.../IntegrationTest.cs` | `(TestDatabaseProviders as IEnumerable<...>)` → `TestDatabaseProviders.Select(row => row.Data)` | v3 `TheoryData<T>` enumerates `TheoryDataRow<T>`, so the cast returned `null` |
+| `Stores/ClientStoreTests.cs` | `new TestTimeoutException(timeout)` → `TestTimeoutException.ForTimedOutTest(timeout)` | Constructor removed in v3 |
+| `Stores/PersistedGrantStoreTests.cs` | `GetAllAsync_Should_Filter` clears the table before seeding | The test shares an in-memory database per class and depended on execution order, which changed in v3 |
+
+### `IdentityModel` → `Duende.IdentityModel` 8.1.0
+
+`IdentityModel` 7.0.0 is deprecated and unlisted. Its successor `Duende.IdentityModel` (Apache-2.0, no dependencies, same license as this repo) is now used by all of `src`.
+
+| Change | Details |
+|--------|---------|
+| `IdentityServer8.csproj`, `IdentityServer8.Storage.csproj` | `PackageReference IdentityModel` → `Duende.IdentityModel`. Packed `.nuspec` files depend on `Duende.IdentityModel` 8.1.0. |
+| 89 files under `src/` (prod, hosts, tests) | Namespaces `IdentityModel`, `IdentityModel.Client`, `using static IdentityModel.OidcConstants` → `Duende.IdentityModel[.Client]` |
+| `Base64Url.Encode/Decode` (removed in Duende) | Replaced by .NET `System.Buffers.Text.Base64Url.EncodeToString/DecodeFromChars`. Invalid input still throws `FormatException`, so error handling is unchanged. |
+
+**Breaking for consumers:** code that relied on the transitive `IdentityModel` namespace must switch to `Duende.IdentityModel`.
+
+### Verification
+
+- Clean restore of all projects: no NU1109, NU1510 or NU1901–NU1904.
+- `dotnet list src/IdentityServer8.sln package --vulnerable --include-transitive` reports nothing vulnerable, and so does a scan of src + samples against the nuget.org vulnerability database.
+- All solutions build, except the pre-existing `samples/Quickstarts/Shared/src/*` templates, which require `SolutionDir`.
+- Tests (CI command): 1135 passed, 1 skipped, the same as before, with 6 Cobertura reports.
+
+---
+
 ## Known Remaining Vulnerabilities
 
-| Package | Version | Severity | Advisory | Status |
-|---------|---------|----------|----------|--------|
-| `SQLitePCLRaw.lib.e_sqlite3` | 2.1.11 | High | [GHSA-2m69-gcr7-jv3q](https://github.com/advisories/GHSA-2m69-gcr7-jv3q) | Transitive dependency in test projects only (via EF Core Sqlite) |
+None. As of 2026-10-26, no vulnerable packages resolve in `src/` or `samples/`. The SQLitePCLRaw advisory GHSA-2m69-gcr7-jv3q was resolved by 2.1.12 and the package is now on 2.1.14.
+
+### Deprecated Packages (follow-up)
+
+| Package | Version | Used by | Status |
+|---------|---------|---------|--------|
+| `IdentityModel` | 7.0.0 | `samples` only (transitively via the packages below) | Deprecated/unlisted; `src` migrated to `Duende.IdentityModel` 8.1.0 |
+| `IdentityModel.OidcClient`, `IdentityModel.AspNetCore`, `IdentityModel.AspNetCore.AccessTokenValidation`, `IdentityModel.AspNetCore.OAuth2Introspection` | various | `samples` | Deprecated/unlisted; successors are `Duende.IdentityModel.OidcClient`, `Duende.AccessTokenManagement.OpenIdConnect`, `Duende.AspNetCore.Authentication.OAuth2Introspection` |
+| `Microsoft.Web.LibraryManager.Build` | 2.1.175 | `samples` | 3.0.114 available (major version, not applied) |

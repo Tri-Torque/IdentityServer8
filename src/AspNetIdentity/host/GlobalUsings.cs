@@ -10,7 +10,7 @@
  copies or substantial portions of the Software.
 */
 
-global using IdentityModel;
+global using Duende.IdentityModel;
 global using IdentityServer8;
 global using IdentityServer8.Configuration;
 global using IdentityServer8.Events;

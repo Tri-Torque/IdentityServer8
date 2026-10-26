@@ -38,7 +38,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
 
         [Fact]
         [Trait("Category", Category)]
-        public async void EmptyContext()
+        public async Task EmptyContext()
         {
             var context = new DefaultHttpContext();
             context.Request.Body = new MemoryStream();
@@ -50,7 +50,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
 
         [Fact]
         [Trait("Category", Category)]
-        public async void Valid_PostBody()
+        public async Task Valid_PostBody()
         {
             var context = new DefaultHttpContext();
 
@@ -68,7 +68,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
 
         [Fact]
         [Trait("Category", Category)]
-        public async void ClientId_Too_Long()
+        public async Task ClientId_Too_Long()
         {
             var context = new DefaultHttpContext();
 
@@ -85,7 +85,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
 
         [Fact]
         [Trait("Category", Category)]
-        public async void ClientSecret_Too_Long()
+        public async Task ClientSecret_Too_Long()
         {
             var context = new DefaultHttpContext();
 
@@ -102,7 +102,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
 
         [Fact]
         [Trait("Category", Category)]
-        public async void Missing_ClientId()
+        public async Task Missing_ClientId()
         {
             var context = new DefaultHttpContext();
 
@@ -118,7 +118,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
 
         [Fact]
         [Trait("Category", Category)]
-        public async void Missing_ClientSecret()
+        public async Task Missing_ClientSecret()
         {
             var context = new DefaultHttpContext();
 
@@ -135,7 +135,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
 
         [Fact]
         [Trait("Category", Category)]
-        public async void Malformed_PostBody()
+        public async Task Malformed_PostBody()
         {
             var context = new DefaultHttpContext();
 

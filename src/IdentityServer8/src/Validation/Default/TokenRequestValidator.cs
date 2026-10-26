@@ -772,7 +772,7 @@ internal class TokenRequestValidator : ITokenRequestValidator
 
         var codeVerifierBytes = Encoding.ASCII.GetBytes(codeVerifier);
         var hashedBytes = codeVerifierBytes.Sha256();
-        var transformedCodeVerifier = Base64Url.Encode(hashedBytes);
+        var transformedCodeVerifier = System.Buffers.Text.Base64Url.EncodeToString(hashedBytes);
 
         return TimeConstantComparer.IsEqual(transformedCodeVerifier.Sha256(), codeChallenge);
     }

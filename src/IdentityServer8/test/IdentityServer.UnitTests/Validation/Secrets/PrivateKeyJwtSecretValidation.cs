@@ -16,7 +16,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer.UnitTests.Common;
 using IdentityServer.UnitTests.Services.Default;
 using IdentityServer.UnitTests.Validation.Setup;
@@ -300,8 +300,8 @@ namespace IdentityServer.UnitTests.Validation.Secrets
             var claimsJson = System.Text.Json.JsonSerializer.Serialize(claims);
 
             // JSON string Base64Url formatına dönüştürülüyor
-            var encodedHeader = Base64Url.Encode(System.Text.Encoding.UTF8.GetBytes(headerJson));
-            var encodedClaims = Base64Url.Encode(System.Text.Encoding.UTF8.GetBytes(claimsJson));
+            var encodedHeader = System.Buffers.Text.Base64Url.EncodeToString(System.Text.Encoding.UTF8.GetBytes(headerJson));
+            var encodedClaims = System.Buffers.Text.Base64Url.EncodeToString(System.Text.Encoding.UTF8.GetBytes(claimsJson));
 
             // İmzasız JWT oluşturuluyor
             var token = $"{encodedHeader}.{encodedClaims}.";

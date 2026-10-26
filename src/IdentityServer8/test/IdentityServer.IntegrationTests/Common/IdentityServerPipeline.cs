@@ -19,7 +19,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using IdentityModel.Client;
+using Duende.IdentityModel.Client;
 using IdentityServer8;
 using IdentityServer8.Configuration;
 using IdentityServer8.Extensions;

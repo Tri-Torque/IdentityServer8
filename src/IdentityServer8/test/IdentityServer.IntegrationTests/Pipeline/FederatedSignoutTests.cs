@@ -17,7 +17,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer.IntegrationTests.Common;
 using IdentityServer8;
 using IdentityServer8.Models;

@@ -12,7 +12,7 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
 
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <NoWarn>$(NoWarn);CS0618;CS8632;SYSLIB0013;SYSLIB0023;SYSLIB0020;SYSLIB0057;ASPDEPR004;ASPDEPR008;EF1001;xUnit1048</NoWarn>
+        <NoWarn>$(NoWarn);CS0618;CS8632;SYSLIB0013;SYSLIB0023;SYSLIB0020;SYSLIB0057;ASPDEPR004;ASPDEPR008;EF1001;xUnit1048;xUnit1051</NoWarn>
 
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)key.snk</AssemblyOriginatorKeyFile>
@@ -68,8 +68,8 @@
 
     <ItemGroup>
  
-        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(MicrosoftCodeAnalysisNetAnalyzersPackageVersion)" PrivateAssets="All" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(MicrosoftSourceLinkGitHubPackageVersion)" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
     </ItemGroup>
 
     <ItemGroup>

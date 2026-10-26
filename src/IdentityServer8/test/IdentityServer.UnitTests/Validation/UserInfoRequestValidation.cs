@@ -11,7 +11,7 @@
 */
 
 using FluentAssertions;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer.UnitTests.Validation.Setup;
 using IdentityServer8.Stores;
 using IdentityServer8.Validation;

@@ -16,7 +16,7 @@ using System.Collections.Specialized;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer.UnitTests.Common;
 using IdentityServer.UnitTests.Validation.Setup;
 using IdentityServer8;
@@ -329,7 +329,7 @@ namespace IdentityServer.UnitTests.Validation.TokenRequest_Validation
         {
             var codeVerifierBytes = Encoding.ASCII.GetBytes(codeVerifier);
             var hashedBytes = codeVerifierBytes.Sha256();
-            var transformedCodeVerifier = Base64Url.Encode(hashedBytes);
+            var transformedCodeVerifier = System.Buffers.Text.Base64Url.EncodeToString(hashedBytes);
 
             return transformedCodeVerifier;
         }

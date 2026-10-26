@@ -20,7 +20,7 @@ using IdentityServer8.Configuration;
 using IdentityServer8.Models;
 using IdentityServer8.Validation;
 using Xunit;
-using static IdentityModel.OidcConstants;
+using static Duende.IdentityModel.OidcConstants;
 
 namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponseGenerator
 {

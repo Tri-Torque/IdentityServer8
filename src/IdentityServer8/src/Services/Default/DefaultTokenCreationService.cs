@@ -103,7 +103,7 @@ public class DefaultTokenCreationService : ITokenCreationService
                 Logger.LogWarning("Certificate {subjectName} has expired on {expiration}", cert.Subject, cert.NotAfter.ToString(CultureInfo.InvariantCulture));
             }
 
-            header["x5t"] = Base64Url.Encode(cert.GetCertHash());
+            header["x5t"] = System.Buffers.Text.Base64Url.EncodeToString(cert.GetCertHash());
         }
 
         if (token.Type == TokenTypes.AccessToken)

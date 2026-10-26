@@ -77,7 +77,7 @@ public static class CryptoHelper
             var leftPart = new byte[size];
             Array.Copy(hash, leftPart, size);
 
-            return Base64Url.Encode(leftPart);
+            return System.Buffers.Text.Base64Url.EncodeToString(leftPart);
         }
     }
 

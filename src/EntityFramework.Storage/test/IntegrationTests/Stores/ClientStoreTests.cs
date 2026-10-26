@@ -158,7 +158,7 @@ public class ClientStoreTests : IntegrationTest<ClientStoreTests, ConfigurationD
             }
             else
             {
-                throw new TestTimeoutException(timeout);
+                throw TestTimeoutException.ForTimedOutTest(timeout);
             }
         }
     }

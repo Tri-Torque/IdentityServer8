@@ -15,7 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityServer.IntegrationTests.Common;
 using IdentityServer8.Models;
 using IdentityServer8.Services;
@@ -79,12 +79,12 @@ public class CustomProfileServiceTests
         response.StatusCode.Should().Be(HttpStatusCode.Redirect);
         response.Headers.Location.ToString().Should().StartWith("https://client/callback");
 
-        var authorization = new IdentityModel.Client.AuthorizeResponse(response.Headers.Location.ToString());
+        var authorization = new Duende.IdentityModel.Client.AuthorizeResponse(response.Headers.Location.ToString());
         authorization.IsError.Should().BeFalse();
         authorization.IdentityToken.Should().NotBeNull();
 
         var payload = authorization.IdentityToken.Split('.')[1];
-        var json = Encoding.UTF8.GetString(Base64Url.Decode(payload));
+        var json = Encoding.UTF8.GetString(System.Buffers.Text.Base64Url.DecodeFromChars(payload));
         var obj = JObject.Parse(json);
 
         obj.GetValue("foo").Should().NotBeNull();

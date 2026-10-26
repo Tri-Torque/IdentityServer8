@@ -52,7 +52,7 @@ public class ProtectedDataMessageStore<TModel> : IMessageStore<TModel>
         {
             try
             {
-                var bytes = Base64Url.Decode(value);
+                var bytes = System.Buffers.Text.Base64Url.DecodeFromChars(value);
                 bytes = Protector.Unprotect(bytes);
                 var json = Encoding.UTF8.GetString(bytes);
                 result = ObjectSerializer.FromString<Message<TModel>>(json);
@@ -76,7 +76,7 @@ public class ProtectedDataMessageStore<TModel> : IMessageStore<TModel>
             var json = ObjectSerializer.ToString(message);
             var bytes = Encoding.UTF8.GetBytes(json);
             bytes = Protector.Protect(bytes);
-            value = Base64Url.Encode(bytes);
+            value = System.Buffers.Text.Base64Url.EncodeToString(bytes);
         }
         catch(Exception ex)
         {

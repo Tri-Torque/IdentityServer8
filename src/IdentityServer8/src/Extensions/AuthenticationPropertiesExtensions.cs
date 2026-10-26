@@ -103,7 +103,7 @@ public static class AuthenticationPropertiesExtensions
     {
         if (value.IsPresent())
         {
-            var bytes = Base64Url.Decode(value);
+            var bytes = System.Buffers.Text.Base64Url.DecodeFromChars(value);
             value = Encoding.UTF8.GetString(bytes);
             return ObjectSerializer.FromString<string[]>(value);
         }
@@ -117,7 +117,7 @@ public static class AuthenticationPropertiesExtensions
         {
             var value = ObjectSerializer.ToString(list);
             var bytes = Encoding.UTF8.GetBytes(value);
-            value = Base64Url.Encode(bytes);
+            value = System.Buffers.Text.Base64Url.EncodeToString(bytes);
             return value;
         }
 
