@@ -22,6 +22,12 @@ public static class ValidatedAuthorizeRequestExtensions
         request.Raw.Remove(OidcConstants.AuthorizeRequest.Prompt);
     }
 
+    public static void RemoveMaxAge(this ValidatedAuthorizeRequest request)
+    {
+        request.MaxAge = null;
+        request.Raw.Remove(OidcConstants.AuthorizeRequest.MaxAge);
+    }
+
     public static string GetPrefixedAcrValue(this ValidatedAuthorizeRequest request, string prefix)
     {
         var value = request.AuthenticationContextReferenceClasses

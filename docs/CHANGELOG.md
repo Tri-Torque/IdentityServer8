@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning 2](http://semver.org/).
 - Pinned `System.Security.Cryptography.Pkcs` to 10.0.14 (GHSA-846f-f764-76mx, GHSA-2fmv-rv2c-59x7; transitive via `Microsoft.Data.SqlClient` and `Aspire.Hosting.SqlServer`)
 - Upgraded `Microsoft.SourceLink.GitHub` 10.0.301 → 10.0.403, fixing vulnerable `Microsoft.Build.Tasks.Git` (GHSA-23fw-v26w-5fgq)
 - Removed the `samples/KeyManagement` sample, which depended on vulnerable `IdentityServer4` 3.1.0 via `IdentityServer4.KeyManagement`
+- JWT validation now checks the validation result explicitly in `PrivateKeyJwtSecretValidator` and `TokenValidator`. Before, invalid client assertions and access tokens were only rejected because of a `NullReferenceException`. Expired JWT access tokens now return `expired_token` instead of `invalid_token`.
+- `max_age=0` on the authorize endpoint is now handled like `prompt=login`, so it no longer sends authenticated users into an endless login loop
+- `DefaultUserSession` no longer treats a successful cookie authentication with an unauthenticated identity as a signed-in user
 
 ### Changed
 

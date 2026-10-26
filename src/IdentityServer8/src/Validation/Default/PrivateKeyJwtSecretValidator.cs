@@ -109,8 +109,18 @@ public class PrivateKeyJwtSecretValidator : ISecretValidator
         {
             var handler = new JsonWebTokenHandler();
             var validateResult = await handler.ValidateTokenAsync(jwtTokenString, tokenValidationParameters);
+            if (!validateResult.IsValid)
+            {
+                _logger.LogError(validateResult.Exception, "JWT token validation error");
+                return fail;
+            }
 
-            var jwtToken = (JsonWebToken) validateResult.SecurityToken;
+            if (validateResult.SecurityToken is not JsonWebToken jwtToken)
+            {
+                _logger.LogError("Client assertion is not a valid JWT.");
+                return fail;
+            }
+
             if (jwtToken.Subject != jwtToken.Issuer)
             {
                 _logger.LogError("Both 'sub' and 'iss' in the client assertion token must have a value of client_id.");

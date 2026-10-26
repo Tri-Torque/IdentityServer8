@@ -193,6 +193,56 @@ Replaced six package references with `<FrameworkReference Include="Microsoft.Asp
 
 ---
 
+## Security Audit vs. Upstream (2026-10-26)
+
+Checked the published security advisories and fork commits of the upstream and sibling projects ([alexhiggins732/IdentityServer8](https://github.com/alexhiggins732/IdentityServer8), [omarbaruzzo/IdentityServer10](https://github.com/omarbaruzzo/IdentityServer10), and the IdentityServer4 successor line) against this codebase.
+
+### Already Applied
+
+| Item | Where |
+|------|-------|
+| [CVE-2024-39694](https://nvd.nist.gov/vuln/detail/CVE-2024-39694): open redirect via control characters in return URLs | `StringsExtensions.IsLocalUrl` (commit 9ccd9e3) |
+| `CachingResourceStore` cache key collision between lookups by name and by scope | Commit 9ccd9e3 |
+| Package bumps (`Google.Protobuf`, `HtmlAgilityPack`, `jQuery.validation`) and the case-insensitive CORS origin match from IdentityServer10 | See "Security Patches (2026-07-24)" |
+| HTML-encoding of front-channel logout iframe URLs | `EndSessionCallbackResult` |
+| Protocol claims (`aud`, `iss`, `iat`, `sub`, …) filtered out of profile service claims | `Constants.Filters.ClaimsServiceFilterClaimTypes` |
+
+Advisories for features this codebase doesn't have (pushed authorization requests, DPoP, BFF) don't apply. alexhiggins732/IdentityServer8 has nothing newer than this fork.
+
+### Fixes Applied
+
+| File | Change | Reason |
+|------|--------|--------|
+| `Validation/Default/PrivateKeyJwtSecretValidator.cs` | Check `TokenValidationResult.IsValid` and fail when it is false; type-check `SecurityToken` | `JsonWebTokenHandler.ValidateTokenAsync` returns validation errors instead of throwing them. Invalid client assertions (bad signature, audience, expiry) were only rejected because of a `NullReferenceException` on the cast, which happened to fail closed. |
+| `Validation/Default/TokenValidator.cs` | Same `IsValid` check in `ValidateJwtAsync`; expiry maps to `expired_token`, everything else to `invalid_token` | Same fail-closed-by-accident pattern. The `SecurityTokenExpiredException` catch block was dead code, so expired JWTs returned `invalid_token`. |
+| `ResponseHandling/Default/AuthorizeInteractionResponseGenerator.cs`, `Extensions/ValidatedAuthorizeRequestExtensions.cs` | `max_age=0` now forces a login like `prompt=login` and is then removed from the request (new `RemoveMaxAge()`) | Before, after the user logged in, `now > auth_time + 0` was still true, so the user was sent back to login forever. Any party could trigger this with a crafted authorize URL (denial of service). OIDC Core §3.1.2.1 defines `max_age=0` as equivalent to `prompt=login`. |
+| `Services/Default/DefaultUserSession.cs` | Require `Principal.Identity.IsAuthenticated` in addition to `AuthenticateResult.Succeeded` | A handler can report success with an unauthenticated principal, and that principal must not be treated as a signed-in user. |
+
+Tests added: expired and tampered JWT access tokens; client assertions with the wrong audience or expired with a trusted key; `max_age=0` (alone and together with `prompt=login`, including the second pass after login); successful authentication with an unauthenticated identity. Unit tests: 760 passed. Integration tests: 293 passed, 1 skipped.
+
+#### Severity and Impact of the Applied Fixes
+
+None of the fixes closes a hole that could be exploited in a standard deployment. The `max_age=0` change is the only real functional fix.
+
+| Fix | Severity | Impact |
+|-----|----------|--------|
+| `max_age=0` handling | **Low–Medium** (availability) | Before, a user could never finish logging in on a request with `max_age=0`. Clients that force re-authentication (step-up, sensitive actions) were broken, and any party could send a user a link that traps them in a redirect loop. No data was exposed. `max_age=0` now behaves like `prompt=login`. |
+| `IsValid` check in `PrivateKeyJwtSecretValidator` and `TokenValidator` | **Low** (latent; hardening against a potentially critical fail-open) | Invalid tokens were already rejected, but only because a null cast threw an exception. A future library change could have turned that into fail-open. Visible behavior changes: expired JWT access tokens now return `expired_token` instead of `invalid_token` (clients that refresh on `expired_token` benefit), and logs no longer show `NullReferenceException` stack traces. |
+| `DefaultUserSession` requires `IsAuthenticated` | **Low** (defense in depth) | Only reachable with a custom authentication handler that reports success with an unauthenticated identity. The standard cookie handler never does that, so behavior doesn't change in a normal setup. |
+
+### Follow-ups (not applied)
+
+These were left out of scope on purpose. The audit only applied bug fixes for existing behavior. Each item below adds new protocol behavior, and some would break existing clients, so each needs its own decision and rollout plan.
+
+| Item | Severity | Why not applied | Impact if applied |
+|------|----------|-----------------|-------------------|
+| Strict client-assertion audience (`aud` = issuer) and `typ: client-authentication+jwt` per RFC 7523bis ([CVE-2025-27370](https://nvd.nist.gov/vuln/detail/CVE-2025-27370), [CVE-2025-27371](https://nvd.nist.gov/vuln/detail/CVE-2025-27371)) | **Medium**, but only when a client also uses the same signing key with other authorization servers | Almost every existing client, including the IdentityModel client libraries, sends the token endpoint URL as `aud`. Today only that URL is accepted, so this server can't be exploited directly. The risk is on the client side: a malicious authorization server can get the client to sign an assertion meant for this server and replay it here. Requiring `aud` = issuer would reject today's clients. | It should be added as an opt-in option (default off) so clients can migrate gradually. Once enabled, assertions with `aud` set to the token endpoint, or without the `typ` header, are rejected. |
+| RFC 9207 `iss` parameter in authorization responses | **Low** (defense in depth) | It's a new protocol feature: the discovery flag `authorization_response_iss_parameter_supported` plus the `iss` response parameter. It only helps clients that talk to several authorization servers, and only when those clients check the parameter. | Adds `iss` to authorize responses and to discovery. Clients that don't know the parameter ignore it. |
+| `StrictJarValidation` enabled by default | **Low** | Turning it on would reject request objects (JAR) that don't have the `typ: oauth-authz-req+jwt` header, which breaks existing clients. The option already exists and can be enabled per deployment. | Request objects without the explicit type are rejected. |
+| Length limit on the encoded Basic authentication header | **Informational** | The decoded client id and secret lengths are already limited (`InputLengthRestrictions`), and Kestrel limits request header size. The remaining benefit is marginal. | Rejects oversized `Authorization: Basic` headers before Base64 decoding. |
+
+---
+
 ## Known Remaining Vulnerabilities
 
 None. As of 2026-10-26, no vulnerable packages resolve in `src/` or `samples/`. The SQLitePCLRaw advisory GHSA-2m69-gcr7-jv3q was resolved by 2.1.12 and the package is now on 2.1.14.

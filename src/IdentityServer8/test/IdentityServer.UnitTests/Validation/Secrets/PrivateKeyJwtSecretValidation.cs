@@ -53,7 +53,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
             _clients = new InMemoryClientStore(ClientValidationTestClients.Get());
         }
 
-        private JsonWebToken CreateToken(string clientId, DateTime? nowOverride = null)
+        private JsonWebToken CreateToken(string clientId, DateTime? nowOverride = null, string audience = "https://idsrv3.com/connect/token")
         {
             var certificate = TestCert.Load();
             var now = nowOverride ?? DateTime.UtcNow;
@@ -70,7 +70,7 @@ namespace IdentityServer.UnitTests.Validation.Secrets
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Issuer = clientId,
-                Audience = "https://idsrv3.com/connect/token",
+                Audience = audience,
                 Claims = claims,
                 Expires = now.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(
@@ -255,6 +255,44 @@ namespace IdentityServer.UnitTests.Validation.Secrets
             result.Success.Should().BeFalse();
         }
 
+
+        [Fact]
+        public async Task Invalid_Audience()
+        {
+            var clientId = "certificate_base64_valid";
+            var client = await _clients.FindEnabledClientByIdAsync(clientId);
+
+            var token = CreateToken(clientId, audience: "https://other-server.com/connect/token");
+            var secret = new ParsedSecret
+            {
+                Id = clientId,
+                Credential = $"{token.EncodedHeader}.{token.EncodedPayload}.{token.EncodedSignature}",
+                Type = IdentityServerConstants.ParsedSecretTypes.JwtBearer
+            };
+
+            var result = await _validator.ValidateAsync(client.ClientSecrets, secret);
+
+            result.Success.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Invalid_Expired_Token_With_Trusted_Key()
+        {
+            var clientId = "certificate_base64_valid";
+            var client = await _clients.FindEnabledClientByIdAsync(clientId);
+
+            var token = CreateToken(clientId, DateTime.UtcNow.AddHours(-1));
+            var secret = new ParsedSecret
+            {
+                Id = clientId,
+                Credential = $"{token.EncodedHeader}.{token.EncodedPayload}.{token.EncodedSignature}",
+                Type = IdentityServerConstants.ParsedSecretTypes.JwtBearer
+            };
+
+            var result = await _validator.ValidateAsync(client.ClientSecrets, secret);
+
+            result.Success.Should().BeFalse();
+        }
 
         [Fact]
         public async Task Invalid_Expired_Token()

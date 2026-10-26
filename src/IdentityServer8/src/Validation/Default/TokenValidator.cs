@@ -260,6 +260,18 @@ internal class TokenValidator : ITokenValidator
         try
         {
             var result = await handler.ValidateTokenAsync(jwt, parameters);
+            if (!result.IsValid)
+            {
+                if (result.Exception is SecurityTokenExpiredException expiredException)
+                {
+                    _logger.LogInformation(expiredException, "JWT token validation error: {exception}", expiredException.Message);
+                    return Invalid(OidcConstants.ProtectedResourceErrors.ExpiredToken);
+                }
+
+                _logger.LogError(result.Exception, "JWT token validation error: {exception}", result.Exception?.Message);
+                return Invalid(OidcConstants.ProtectedResourceErrors.InvalidToken);
+            }
+
             var securityToken = result.SecurityToken;
             var id = result.ClaimsIdentity;
             var jwtSecurityToken = securityToken as JsonWebToken;

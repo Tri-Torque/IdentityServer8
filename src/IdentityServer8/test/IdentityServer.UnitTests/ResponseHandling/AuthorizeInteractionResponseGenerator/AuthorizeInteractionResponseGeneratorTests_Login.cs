@@ -75,6 +75,64 @@ namespace IdentityServer.UnitTests.ResponseHandling.AuthorizeInteractionResponse
         }
 
         [Fact]
+        public async Task Authenticated_User_with_max_age_zero_must_SignIn_once()
+        {
+            var request = new ValidatedAuthorizeRequest
+            {
+                ClientId = "foo",
+                Client = new Client(),
+                Subject = new IdentityServerUser("123")
+                {
+                    IdentityProvider = IdentityServerConstants.LocalIdentityProvider,
+                    AuthenticationTime = _clock.UtcNow.UtcDateTime
+                }.CreatePrincipal(),
+                MaxAge = 0,
+                Raw = new NameValueCollection { { OidcConstants.AuthorizeRequest.MaxAge, "0" } }
+            };
+
+            var result = await _subject.ProcessLoginAsync(request);
+
+            result.IsLogin.Should().BeTrue();
+            request.MaxAge.Should().BeNull();
+            request.Raw.Get(OidcConstants.AuthorizeRequest.MaxAge).Should().BeNull();
+
+            // the redirect back from the login page must not force another login
+            result = await _subject.ProcessLoginAsync(request);
+
+            result.IsLogin.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Prompt_login_and_max_age_zero_must_both_be_removed()
+        {
+            var request = new ValidatedAuthorizeRequest
+            {
+                ClientId = "foo",
+                Client = new Client(),
+                Subject = new IdentityServerUser("123")
+                {
+                    IdentityProvider = IdentityServerConstants.LocalIdentityProvider,
+                    AuthenticationTime = _clock.UtcNow.UtcDateTime
+                }.CreatePrincipal(),
+                PromptModes = new[] { OidcConstants.PromptModes.Login },
+                MaxAge = 0,
+                Raw = new NameValueCollection
+                {
+                    { OidcConstants.AuthorizeRequest.Prompt, OidcConstants.PromptModes.Login },
+                    { OidcConstants.AuthorizeRequest.MaxAge, "0" }
+                }
+            };
+
+            var result = await _subject.ProcessLoginAsync(request);
+
+            result.IsLogin.Should().BeTrue();
+            request.PromptModes.Should().BeEmpty();
+            request.MaxAge.Should().BeNull();
+            request.Raw.Get(OidcConstants.AuthorizeRequest.Prompt).Should().BeNull();
+            request.Raw.Get(OidcConstants.AuthorizeRequest.MaxAge).Should().BeNull();
+        }
+
+        [Fact]
         public async Task Authenticated_User_with_allowed_current_Idp_must_not_SignIn()
         {
             var request = new ValidatedAuthorizeRequest

@@ -52,6 +52,17 @@ namespace IdentityServer.UnitTests.Services.Default
         }
 
         [Fact]
+        public async Task GetUser_when_authentication_succeeds_with_unauthenticated_identity_should_return_null()
+        {
+            var unauthenticated = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim("sub", "123") }));
+            _mockAuthenticationHandler.Result = AuthenticateResult.Success(new AuthenticationTicket(unauthenticated, _props, "scheme"));
+
+            var user = await _subject.GetUserAsync();
+
+            user.Should().BeNull();
+        }
+
+        [Fact]
         public async Task CreateSessionId_when_user_is_anonymous_should_generate_new_sid()
         {
             await _subject.CreateSessionIdAsync(_user, _props);

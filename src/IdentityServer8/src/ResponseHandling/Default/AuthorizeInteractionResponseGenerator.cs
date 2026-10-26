@@ -117,15 +117,27 @@ public class AuthorizeInteractionResponseGenerator : IAuthorizeInteractionRespon
     /// <returns></returns>
     protected internal virtual async Task<InteractionResponse> ProcessLoginAsync(ValidatedAuthorizeRequest request)
     {
+        // prompt=login, prompt=select_account and max_age=0 all force a login.
+        // Both prompt and max_age are removed so that, when the login page redirects
+        // back, we don't force a login again (which would loop forever for max_age=0).
+        var forceLogin = false;
         if (request.PromptModes.Contains(OidcConstants.PromptModes.Login) ||
             request.PromptModes.Contains(OidcConstants.PromptModes.SelectAccount))
         {
             Logger.LogInformation("Showing login: request contains prompt={0}", request.PromptModes.ToSpaceSeparatedString());
-
-            // remove prompt so when we redirect back in from login page
-            // we won't think we need to force a prompt again
             request.RemovePrompt();
-            
+            forceLogin = true;
+        }
+
+        if (request.MaxAge == 0)
+        {
+            Logger.LogInformation("Showing login: request contains max_age=0.");
+            request.RemoveMaxAge();
+            forceLogin = true;
+        }
+
+        if (forceLogin)
+        {
             return new InteractionResponse { IsLogin = true };
         }
 

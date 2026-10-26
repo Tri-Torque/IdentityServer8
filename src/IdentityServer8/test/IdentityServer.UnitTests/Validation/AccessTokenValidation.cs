@@ -200,6 +200,40 @@ namespace IdentityServer.UnitTests.Validation
         
         [Fact]
         [Trait("Category", Category)]
+        public async Task Expired_JWT_Token()
+        {
+            var signer = Factory.CreateDefaultTokenCreator(clock: new StubClock { UtcNowFunc = () => DateTime.UtcNow.AddHours(-1) });
+            var token = TokenFactory.CreateAccessToken(new Client { ClientId = "roclient" }, "valid", 600, "read", "write");
+            token.CreationTime = DateTime.UtcNow.AddHours(-1);
+            var jwt = await signer.CreateTokenAsync(token);
+
+            var validator = Factory.CreateTokenValidator(null);
+            var result = await validator.ValidateAccessTokenAsync(jwt);
+
+            result.IsError.Should().BeTrue();
+            result.Error.Should().Be(OidcConstants.ProtectedResourceErrors.ExpiredToken);
+        }
+
+        [Fact]
+        [Trait("Category", Category)]
+        public async Task JWT_Token_with_tampered_signature()
+        {
+            var signer = Factory.CreateDefaultTokenCreator();
+            var jwt = await signer.CreateTokenAsync(TokenFactory.CreateAccessToken(new Client { ClientId = "roclient" }, "valid", 600, "read", "write"));
+            var parts = jwt.Split('.');
+            var signature = parts[2].ToCharArray();
+            signature[0] = signature[0] == 'A' ? 'B' : 'A';
+            var tampered = $"{parts[0]}.{parts[1]}.{new string(signature)}";
+
+            var validator = Factory.CreateTokenValidator(null);
+            var result = await validator.ValidateAccessTokenAsync(tampered);
+
+            result.IsError.Should().BeTrue();
+            result.Error.Should().Be(OidcConstants.ProtectedResourceErrors.InvalidToken);
+        }
+
+        [Fact]
+        [Trait("Category", Category)]
         public async Task JWT_Token_invalid_Issuer()
         {
             var signer = Factory.CreateDefaultTokenCreator();
