@@ -3,9 +3,9 @@
   <ItemGroup>
     <PackageReference Include="jQuery" />
     <PackageReference Include="jQuery.validation" />
-    <PackageReference Include="HigginsSoft.IdentityServer8" />
-    <PackageReference Include="HigginsSoft.IdentityServer8.AspnetIdentity" />
-     <PackageReference Include="HigginsSoft.IdentityServer8.Security" />
+    <ProjectReference Include="..\..\..\..\..\src\IdentityServer8\src\IdentityServer8.csproj" />
+    <ProjectReference Include="..\..\..\..\..\src\AspNetIdentity\src\IdentityServer8.AspNetIdentity.csproj" />
+     <ProjectReference Include="..\..\..\..\..\src\Security\IdentityServer8.Security\IdentityServer8.Security.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
 

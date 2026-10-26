@@ -1,7 +1,4 @@
 <Project>
-  <PropertyGroup>
-	<IdentityServerVersion>10.0.0</IdentityServerVersion>
-  </PropertyGroup>
   <ImportGroup>
 	 <Import Project="../Directory.Build.props" />
   </ImportGroup>
@@ -12,13 +9,7 @@
   </ItemGroup>
   <PropertyGroup>
 	<SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageVersion Include="HigginsSoft.IdentityServer8" Version="$(IdentityServerVersion)" />
-	<PackageVersion Include="HigginsSoft.IdentityServer8.Security" Version="$(IdentityServerVersion)" />
-	<PackageVersion Include="HigginsSoft.IdentityServer8.AspNetIdentity" Version="$(IdentityServerVersion)" />
-    <PackageVersion Include="HigginsSoft.IdentityServer8.EntityFramework" Version="$(IdentityServerVersion)" />
-  </ItemGroup> 
+  </PropertyGroup> 
   <ItemGroup>
     <PackageReference Include="IdentityModel.OidcClient" />
     <PackageReference Include="IdentityModel.AspNetCore" />
@@ -26,9 +17,7 @@
     <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection"  />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="SeriLog" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Extensions.Logging" />
