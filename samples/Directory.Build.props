@@ -11,10 +11,9 @@
 	<SignAssembly>false</SignAssembly>
   </PropertyGroup> 
   <ItemGroup>
-    <PackageReference Include="IdentityModel.OidcClient" />
-    <PackageReference Include="IdentityModel.AspNetCore" />
-    <PackageReference Include="IdentityModel.AspNetCore.AccessTokenValidation" />
-    <PackageReference Include="IdentityModel.AspNetCore.OAuth2Introspection"  />
+    <PackageReference Include="Duende.IdentityModel.OidcClient" />
+    <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
+    <PackageReference Include="Duende.AspNetCore.Authentication.OAuth2Introspection" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />

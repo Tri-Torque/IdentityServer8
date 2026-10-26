@@ -10,17 +10,18 @@
  copies or substantial portions of the Software.
 */
 
-global using IdentityModel;
-global using IdentityModel.Client;
+global using Duende.IdentityModel;
+global using Duende.IdentityModel.Client;
 global using Serilog;
 global using System.Diagnostics;
 global using System.Text;
 global using System.Text.Json;
 
 
-global using IdentityModel.OidcClient;
-global using IdentityModel.OidcClient.Browser;
-global using IdentityModel.AspNetCore.AccessTokenValidation;
+global using Duende.IdentityModel.OidcClient;
+global using Duende.IdentityModel.OidcClient.Browser;
+global using Duende.AccessTokenManagement.OpenIdConnect;
+global using Duende.AspNetCore.Authentication.OAuth2Introspection;
 
 
 global using Microsoft.AspNetCore.Builder;

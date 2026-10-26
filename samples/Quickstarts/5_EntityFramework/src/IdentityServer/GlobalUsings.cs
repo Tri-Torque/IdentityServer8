@@ -10,7 +10,7 @@
  copies or substantial portions of the Software.
 */
 
-global using IdentityModel;
+global using Duende.IdentityModel;
 global using IdentityServer8;
 global using IdentityServer8.Configuration;
 global using IdentityServer8.EntityFramework.DbContexts;
@@ -41,5 +41,5 @@ global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text;
 global using System.Text.Json;
-global using static IdentityModel.JwtClaimTypes;
+global using static Duende.IdentityModel.JwtClaimTypes;
 global using IdentityServerClaimValueTypes = IdentityServer8.IdentityServerConstants.ClaimValueTypes;

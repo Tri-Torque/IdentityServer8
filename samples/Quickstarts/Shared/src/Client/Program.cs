@@ -10,7 +10,7 @@
  copies or substantial portions of the Software.
 */
 
-using IdentityModel.Client;
+using Duende.IdentityModel.Client;
 using System.Diagnostics;
 using System.Text.Json;
 

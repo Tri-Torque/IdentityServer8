@@ -188,7 +188,7 @@ Replaced six package references with `<FrameworkReference Include="Microsoft.Asp
 
 - Clean restore of all projects: no NU1109, NU1510 or NU1901–NU1904.
 - `dotnet list src/IdentityServer8.sln package --vulnerable --include-transitive` reports nothing vulnerable, and so does a scan of src + samples against the nuget.org vulnerability database.
-- All solutions build, except the pre-existing `samples/Quickstarts/Shared/src/*` templates, which require `SolutionDir`.
+- All sample solutions build. Samples now use `Duende.IdentityModel`, `Duende.IdentityModel.OidcClient`, `Duende.AccessTokenManagement.OpenIdConnect` and `Duende.AspNetCore.Authentication.OAuth2Introspection`; legacy `IdentityModel` 7.0.0 entries and `samples/Clients/old` were removed. The `samples/Quickstarts/Shared/src/*` templates only build through the quickstart solutions (they need `SolutionDir`).
 - Tests (CI command): 1135 passed, 1 skipped, the same as before, with 6 Cobertura reports.
 
 ---

@@ -11,7 +11,7 @@
 */
 
 global using Clients;
-global using IdentityModel.Client;
+global using Duende.IdentityModel.Client;
 global using System.Security.Cryptography;
 global using System.Security.Cryptography.X509Certificates;
 global using System.Text.Json;

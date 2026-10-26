@@ -29,8 +29,8 @@ public static class TokenResponseExtensions
                 var header = parts[0];
                 var claims = parts[1];
 
-                var headerJson = Encoding.UTF8.GetString(Base64Url.Decode(header));
-                var claimsJson = Encoding.UTF8.GetString(Base64Url.Decode(claims));
+                var headerJson = Encoding.UTF8.GetString(System.Buffers.Text.Base64Url.DecodeFromChars(header));
+                var claimsJson = Encoding.UTF8.GetString(System.Buffers.Text.Base64Url.DecodeFromChars(claims));
                 Console.WriteLine(JsonSerializer.Deserialize<JsonElement>(headerJson));
                 Console.WriteLine(JsonSerializer.Deserialize<JsonElement>(claimsJson));
             }

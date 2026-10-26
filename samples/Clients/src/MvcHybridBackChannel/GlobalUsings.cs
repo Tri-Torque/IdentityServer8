@@ -11,8 +11,8 @@
 */
 
 global using Clients;
-global using IdentityModel;
-global using IdentityModel.Client;
+global using Duende.IdentityModel;
+global using Duende.IdentityModel.Client;
 global using Microsoft.AspNetCore;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authentication.Cookies;

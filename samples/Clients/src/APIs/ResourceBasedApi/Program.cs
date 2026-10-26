@@ -23,7 +23,6 @@ services.AddControllers();
 
 services.AddCors()
     .AddDistributedMemoryCache()
-    .AddScopeTransformation()
     .AddAuthentication("token")
 
     // JWT tokens
@@ -35,7 +34,7 @@ services.AddCors()
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
 
         // if token does not contain a dot, it is a reference token
-        options.ForwardDefaultSelector = Selector.ForwardReferenceToken("introspection");
+        options.ForwardDefaultSelector = context => context.Request.Headers.Authorization.ToString().Split(' ').LastOrDefault() is { } token && !token.Contains('.') ? "introspection" : null;
     })
 
     // reference tokens

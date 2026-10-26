@@ -11,7 +11,7 @@
 */
 
 global using Clients;
-global using IdentityModel;
-global using IdentityModel.Client;
+global using Duende.IdentityModel;
+global using Duende.IdentityModel.Client;
 global using System.Text;
 global using System.Text.Json;

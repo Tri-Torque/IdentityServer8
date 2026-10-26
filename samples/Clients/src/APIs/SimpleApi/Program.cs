@@ -23,7 +23,6 @@ services.AddControllers();
 
 services.AddCors()
     .AddDistributedMemoryCache()
-    .AddScopeTransformation()
     .AddAuthentication("token")
 
     // JWT tokens
