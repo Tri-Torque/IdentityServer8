@@ -91,6 +91,6 @@ jobs:
 
     # Push the package
     - name: Push
-      if: ${{ (github.event_name == 'push') && (runner.os == 'Windows') }} 
+      if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (runner.os == 'Windows') }} 
       run: dotnet nuget push .\nuget\*.nupkg  --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
 
