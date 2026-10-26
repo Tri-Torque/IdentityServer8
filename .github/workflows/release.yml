@@ -16,18 +16,15 @@ on:
     - ".vs/*"
     - ".config/*"
     - ".github/*"
-    - "Directory.Build.props"
-    - "Directory.Build.targets"
-    - "Directory.Build.props"
-    - "**/*.sln"
     - "IdentityServer8.DotNet.ruleset"
     - "LICENSCE"
     - "Nuget.config"
     - "SECURITY.md"
     - "SPONSORS.md"
     - "README.md"
-    - "samples"
-    - "nuget"
+    - "samples/**"
+    - "nuget/**"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -63,6 +60,20 @@ jobs:
       run: dotnet build src/IdentityServer8.sln --configuration Release --no-restore -p:Version=${{ steps.nbgv.outputs.SemVer2 }}
     - name: Test
       run: dotnet test src/IdentityServer8.sln --configuration Release --no-build --verbosity normal /p:CollectCoverage=true --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura
+
+    - name: Verify packages
+      shell: pwsh
+      run: |
+        $expected = '${{ steps.nbgv.outputs.SemVer2 }}'
+        $pkgs = Get-ChildItem nuget -Filter *.nupkg
+        if (-not $pkgs) { throw 'No packages were produced in nuget/' }
+        foreach ($p in $pkgs) {
+          if ($p.Name -notmatch "\.$([regex]::Escape($expected))\.nupkg$") { throw "Unexpected package version: $($p.Name) (expected $expected)" }
+          $id = $p.Name -replace "\.$([regex]::Escape($expected))\.nupkg$", ''
+          $url = "https://api.nuget.org/v3-flatcontainer/$($id.ToLower())/$($expected.ToLower())/$($id.ToLower()).nuspec"
+          try { Invoke-WebRequest $url -Method Head -UseBasicParsing | Out-Null; throw "$id $expected already exists on nuget.org" } catch [Microsoft.PowerShell.Commands.HttpResponseException] { }
+        }
+        $pkgs | ForEach-Object { Write-Host "OK: $($_.Name)" }
 
     #- name: Upload coverage reports to Codecov
     #  uses: codecov/codecov-action@v4.0.1

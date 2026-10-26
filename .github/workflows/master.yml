@@ -16,10 +16,6 @@ on:
     - ".vs/*"
     - ".config/*"
     - ".github/*"
-    - "Directory.Build.props"
-    - "Directory.Build.targets"
-    - "Directory.Build.props"
-    - "**/*.sln"
     - "global.json"
     - "IdentityServer8.DotNet.ruleset"
     - "LICENSCE"
@@ -27,8 +23,8 @@ on:
     - "SECURITY.md"
     - "SPONSORS.md"
     - "README.md"
-    - "samples"
-    - "nuget"
+    - "samples/**"
+    - "nuget/**"
 
 jobs:
   build:
@@ -66,8 +62,4 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: Tri-Torque/IdentityServer8
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-    - name: Push
-      if: ${{ (github.event_name == 'push') && (runner.os == 'Windows') }} 
-      run: dotnet nuget push .\nuget\*.nupkg  --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
 

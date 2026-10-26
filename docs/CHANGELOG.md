@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning 2](http://semver.org/).
 
 ## [Unreleased]
 
+## [10.1.0] - 2026-10-26
+
 ### Security
 
 - Pinned `System.Security.Cryptography.Pkcs` to 10.0.14 (GHSA-846f-f764-76mx, GHSA-2fmv-rv2c-59x7; transitive via `Microsoft.Data.SqlClient` and `Aspire.Hosting.SqlServer`)
