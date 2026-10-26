@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.4.6">
+<Project Sdk="Aspire.AppHost.Sdk/13.6.4">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -14,12 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IdentityServer8\host\Host.csproj"
-                      AspireProjectMetadataTypeName="IdentityServerHost" />
-    <ProjectReference Include="..\EntityFramework\host\Host.csproj"
-                      AspireProjectMetadataTypeName="EntityFrameworkHost" />
-    <ProjectReference Include="..\AspNetIdentity\host\Host.csproj"
-                      AspireProjectMetadataTypeName="AspNetIdentityHost" />
+    <ProjectReference Include="..\IdentityServer8\host\Host.csproj" AspireProjectMetadataTypeName="IdentityServerHost" />
+    <ProjectReference Include="..\EntityFramework\host\Host.csproj" AspireProjectMetadataTypeName="EntityFrameworkHost" />
+    <ProjectReference Include="..\AspNetIdentity\host\Host.csproj" AspireProjectMetadataTypeName="AspNetIdentityHost" />
   </ItemGroup>
 
 </Project>
